@@ -235,9 +235,7 @@ const Expenses = () => {
                       <span class="text-red-500 font-bold">$ {item.valor}</span>
                     </td>
                     <td class="px-5 py-4">
-                      <span class="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200">
-                        ic-server
-                      </span>
+                      <img src={item.imagen} alt="" />
                     </td>
                     <td class="px-5 py-4 text-slate-700 dark:text-slate-200">
                       {item.usuarioId}

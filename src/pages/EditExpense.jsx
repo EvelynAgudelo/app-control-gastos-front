@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { end_points } from "../services/api";
 import { useState, useEffect } from "react";
+import { redirectAlert } from "../helpers/alerts";
 
 const EditExpense = () => {
   const [getExpense, setExpense] = useState({});
@@ -18,21 +19,41 @@ const EditExpense = () => {
       .then((reponse) => reponse.json())
       .then((data) => {
         setExpense(data);
-        setDescripcion(data.descripcion)
-        setFecha(data.fecha)
-        setValor(data.valor)
-        setImagen(data.imagen)
-        setUsuarioId(data.usuarioId)
-        setMedioPagoId(data.medioPagoId)
-        setComercioId(data.comercioId)
-        setCategoriaId(data.categoriaId)
+        setDescripcion(data.descripcion);
+        setFecha(data.fecha);
+        setValor(data.valor);
+        setImagen(data.imagen);
+        setUsuarioId(data.usuarioId);
+        setMedioPagoId(data.medioPagoId);
+        setComercioId(data.comercioId);
+        setCategoriaId(data.categoriaId);
       });
   }
   useEffect(() => {
     fetchExpenses();
   }, []);
 
-  console.log(getExpense);
+  function updateExpense() {
+    let expense = {
+      descripcion,
+      fecha,
+      valor,
+      imagen,
+      usuarioId,
+      medioPagoId,
+      comercioId,
+      categoriaId,
+    };
+    fetch(end_points.expenses + id, {
+      method: "PATCH",
+      body: JSON.stringify(expense),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        redirectAlert("Cambios realizados", "Será redireccionado en un momento", "success", "/expenses")
+      });
+  }
 
   return (
     <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-slate-50 dark:bg-slate-950">
@@ -109,6 +130,7 @@ const EditExpense = () => {
                   placeholder="Descripción"
                   type="text"
                   value={descripcion}
+                  onChange={(e) => setDescripcion(e.target.value)}
                 />
               </div>
 
@@ -121,6 +143,7 @@ const EditExpense = () => {
                   class="flex w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white  px-4 py-3 text-sm ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006600] focus-visible:ring-offset-2"
                   type="date"
                   value={fecha}
+                  onChange={(e) => setFecha(e.target.value)}
                 />
               </div>
 
@@ -133,6 +156,7 @@ const EditExpense = () => {
                   class="flex w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white  px-4 py-3 text-sm ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006600] focus-visible:ring-offset-2"
                   placeholder="Valor"
                   type="number"
+                  onChange={(e) => setValor(e.target.value)}
                 />
               </div>
 
@@ -145,6 +169,7 @@ const EditExpense = () => {
                   class="flex w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white  px-4 py-3 text-sm ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006600] focus-visible:ring-offset-2"
                   placeholder="ic-server"
                   type="text"
+                  onChange={(e) => setImagen(e.target.value)}
                 />
                 <div class="rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 /40 p-4">
                   <p class="text-slate-900 dark:text-slate-100 text-sm font-semibold">
@@ -168,6 +193,7 @@ const EditExpense = () => {
                   class="flex w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white  px-4 py-3 text-sm ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006600] focus-visible:ring-offset-2"
                   placeholder="1"
                   type="number"
+                  onChange={(e) => setUsuarioId(e.target.value)}
                 />
               </div>
 
@@ -180,6 +206,7 @@ const EditExpense = () => {
                   class="flex w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white  px-4 py-3 text-sm ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006600] focus-visible:ring-offset-2"
                   placeholder="104"
                   type="number"
+                  onChange={(e) => setMedioPagoId(e.target.value)}
                 />
               </div>
 
@@ -192,6 +219,7 @@ const EditExpense = () => {
                   class="flex w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white px-4 py-3 text-sm ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006600] focus-visible:ring-offset-2"
                   placeholder="201"
                   type="number"
+                  onChange={(e) => setComercioId(e.target.value)}
                 />
               </div>
 
@@ -204,6 +232,7 @@ const EditExpense = () => {
                   class="flex w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white px-4 py-3 text-sm ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006600] focus-visible:ring-offset-2"
                   placeholder="303"
                   type="number"
+                  onChange={(e) => setCategoriaId(e.target.value)}
                 />
               </div>
             </div>
@@ -217,6 +246,7 @@ const EditExpense = () => {
               </Link>
               <button
                 type="button"
+                onClick={updateExpense}
                 class="inline-flex items-center justify-center rounded-lg bg-[#006600] px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-[#006600]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006600] focus-visible:ring-offset-2"
               >
                 Guardar cambios
