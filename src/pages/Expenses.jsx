@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { end_points } from "../services/api";
+import Swal from "sweetalert2";
 import { getLocalStorage, removeLocalStorage } from "../helpers/local-storage";
 import { Link } from "react-router-dom";
 const Expenses = () => {
@@ -16,6 +17,34 @@ const Expenses = () => {
   useEffect(() => {
     fetchExpenses();
   }, []);
+
+  function deleteExpense(id) {
+    Swal.fire({
+      title: "Está seguro/a?",
+      text: "Esta acción no se peude revertir",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, Eliminar!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Eliminado!",
+          text: "El gasto se eliminó correctamente.",
+          icon: "success",
+        });
+        fetch(end_points.expenses + id, {
+          method: "DELETE",
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            fetchExpenses();
+          });
+      }
+    });
+  }
 
   console.log(getExpenses);
 
@@ -203,36 +232,34 @@ const Expenses = () => {
                       {item.fecha}
                     </td>
                     <td class="px-5 py-4">
-                      <span class="text-red-500 font-bold">$ 1.580.000</span>
+                      <span class="text-red-500 font-bold">$ {item.valor}</span>
                     </td>
                     <td class="px-5 py-4">
-                      <span class="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200">
-                        ic-server
-                      </span>
+                      <img src={item.imagen} alt="" />
                     </td>
                     <td class="px-5 py-4 text-slate-700 dark:text-slate-200">
-                      1
+                      {item.usuarioId}
                     </td>
                     <td class="px-5 py-4 text-slate-700 dark:text-slate-200">
-                      104
+                      {item.medioPagoId}
                     </td>
                     <td class="px-5 py-4 text-slate-700 dark:text-slate-200">
-                      201
+                      {item.comercioId}
                     </td>
                     <td class="px-5 py-4 text-slate-700 dark:text-slate-200">
-                      303
+                      {item.categoriaId}
                     </td>
                     <td class="px-5 py-4">
                       <div class="flex items-center gap-2">
                         <Link
-                          to="/expenses/edit"
+                          to={"/edit-expense/" + item.id}
                           class="inline-flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-xs font-semibold text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                         >
                           Editar
                         </Link>
                         <button
+                          onClick={() => deleteExpense(item.id)}
                           type="button"
-                          disabled
                           class="inline-flex items-center justify-center rounded-lg bg-red-500 px-3 py-2 text-xs font-bold text-white disabled:pointer-events-none disabled:opacity-50"
                         >
                           Eliminar
